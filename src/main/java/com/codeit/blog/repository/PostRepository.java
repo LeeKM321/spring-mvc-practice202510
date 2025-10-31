@@ -1,18 +1,24 @@
 package com.codeit.blog.repository;
 
+import com.codeit.blog.entity.Category;
+import com.codeit.blog.entity.Post;
+
+import java.util.List;
+import java.util.Optional;
+
 public interface PostRepository {
 
-    // findAll
+     List<Post> findAll();
 
-    // findById
+     Optional<Post> findById(Long id);
 
-    // save
+     Post save(Post post);
 
-    // deleteById
+     void deleteById(Long id);
 
-    // findByCategory
-    // findByTitleContaining
-    // findByTitleOrContentContaining
+     List<Post> findByCategory(Category category);
+     List<Post> findByTitleContaining(String keyword);
+     List<Post> findByTitleOrContentContaining(String keyword);
 
 
 }
