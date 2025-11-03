@@ -20,5 +20,7 @@ public interface PostRepository {
      List<Post> findByTitleContaining(String keyword);
      List<Post> findByTitleOrContentContaining(String keyword);
 
+     void updateViewCount(Long id);
+
 
 }

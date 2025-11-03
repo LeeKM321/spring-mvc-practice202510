@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 public class MemoryPostRepository implements PostRepository {
@@ -43,7 +44,9 @@ public class MemoryPostRepository implements PostRepository {
 
     @Override
     public List<Post> findByCategory(Category category) {
-        return List.of();
+        return store.values().stream()
+                .filter(post -> post.getCategory() == category)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -53,6 +56,14 @@ public class MemoryPostRepository implements PostRepository {
 
     @Override
     public List<Post> findByTitleOrContentContaining(String keyword) {
-        return List.of();
+        return store.values().stream()
+                .filter(post -> post.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                        post.getContent().contains(keyword))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateViewCount(Long id) {
+        store.get(id).setViewCount();
     }
 }

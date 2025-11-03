@@ -69,7 +69,15 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "latest") String sort,
             Model model
     ) {
-        postService.searchPost(keyword, category, sort);
+        List<PostResponse> posts = postService.searchPost(keyword, category, sort);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("keyword",  keyword);
+        model.addAttribute("category", category);
+        model.addAttribute("sort", sort);
+        model.addAttribute("pageTitle", "🔎 검색 결과");
+
+        return "posts/list";
     }
 
 }
