@@ -6,11 +6,13 @@ import com.codeit.blog.dto.response.PostResponse;
 import com.codeit.blog.entity.Category;
 import com.codeit.blog.entity.Post;
 import com.codeit.blog.service.CommentService;
+import com.codeit.blog.service.FileService;
 import com.codeit.blog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class PostController {
 
     private final PostService postService;
     private final CommentService commentService;
+    private final FileService fileService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String list(Model model) {
@@ -40,8 +43,18 @@ public class PostController {
     }
 
     @PostMapping
-    public String create(PostRequest request, Model model) {
+    public String create(PostRequest request,
+                         // 만약 전달되는 파일이 여러개다? List<MultipartFile> 로 받으면 끝. 반복 처리.
+                         @RequestParam(value = "thumbnail", required = false) MultipartFile file,
+                         Model model) {
         System.out.println("/posts: POST, 글 등록 요청!");
+
+        // 파일 업로드 처리
+        if (file != null && !file.isEmpty()) {
+            String fileName = fileService.saveFile(file);
+            request.setThumbnailPath(fileName);
+        }
+
         // form 태그에서 전송되는 데이터는 입력 양식 태그의 name 속성의 이름으로 얻어올 수 있습니다.
         Post saved = postService.createPost(request);
 
@@ -79,6 +92,8 @@ public class PostController {
 
         return "posts/list";
     }
+
+    // 게시글 삭제 -> 게시글에 포함된 이미지 파일도 함께 삭제 (Post가 파일명을 가지고 있음.)
 
 }
 
